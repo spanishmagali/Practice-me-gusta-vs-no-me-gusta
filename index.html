@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¡Me Gusta! — Interactive Spanish Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+    }
+    h1, h2, h3, .font-display {
+      font-family: 'Nunito', sans-serif;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.92); opacity: 0; }
+      70% { transform: scale(1.03); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-pop {
+      animation: popIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .animate-shake {
+      animation: shake 0.35s ease-in-out;
+    }
+    /* Custom subtle tactile button press */
+    .btn-tactile {
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .btn-tactile:active {
+      transform: translateY(2px);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-amber-50 via-rose-50/40 to-sky-50 text-slate-800 selection:bg-amber-200">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-2xl shadow-md shadow-emerald-200 text-white">
+          🇪🇸
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 leading-none">
+            ¡Me Gusta! <span class="text-emerald-600">Lab</span>
+          </h1>
+          <p class="text-xs font-medium text-slate-500 mt-0.5">Interactive Spanish Likes &amp; Dislikes Studio</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center bg-slate-100 p-1.5 rounded-2xl w-full sm:w-auto justify-between sm:justify-start gap-1" role="tablist">
+        <button id="tab-builder" onclick="switchTab('builder')" class="tab-btn flex-1 sm:flex-none px-4 py-2 rounded-xl text-sm font-bold transition-all bg-white text-emerald-700 shadow-sm flex items-center justify-center gap-1.5">
+          <span>🧩</span> <span>Sentence Lab</span>
+        </button>
+        <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn flex-1 sm:flex-none px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5">
+          <span>📝</span> <span>25-Q Quiz</span>
+        </button>
+        <button id="tab-game" onclick="switchTab('game')" class="tab-btn flex-1 sm:flex-none px-4 py-2 rounded-xl text-sm font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5">
+          <span>⚡</span> <span>Speed Sorter</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+    <!-- Quick Golden Rule Banner -->
+    <section class="mb-6 bg-white rounded-3xl border border-amber-200/80 p-4 sm:p-5 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-start sm:items-center gap-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shrink-0">
+          💡
+        </div>
+        <div>
+          <h2 class="text-sm sm:text-base font-extrabold text-slate-800">The Golden Rule: Flip Your Thinking!</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+            Instead of <em>"I like X"</em>, Spanish literally says <em>"X pleases me"</em>. Use <span class="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 font-bold">gusta</span> for <strong>1 thing or any action</strong>, and <span class="px-2 py-0.5 rounded-lg bg-indigo-100 text-indigo-800 font-bold">gustan</span> for <strong>plural things</strong>!
+          </p>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 shrink-0 text-xs font-bold">
+        <span class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">💚 Me = To me</span>
+        <span class="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200">❤️ No me = Not to me</span>
+        <span class="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 border border-sky-200">🗣️ ¿Te = To you?</span>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODULE 1: INTERACTIVE SENTENCE BUILDER LAB                -->
+    <!-- ========================================================= -->
+    <section id="view-builder" class="space-y-6 animate-pop">
+      
+      <!-- Live Sentence Stage Card -->
+      <div id="stage-card" class="bg-white rounded-3xl border-2 border-emerald-200 shadow-lg shadow-emerald-100/50 p-5 sm:p-8 transition-colors duration-300">
+        
+        <!-- Step 1: Mode Selector -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Step 1 · Choose Your Feeling or Question</span>
+            <div class="flex flex-wrap gap-2.5 mt-2">
+              <button onclick="setBuilderMode('like')" id="mode-like" class="btn-tactile px-4 py-2.5 rounded-2xl font-extrabold text-sm flex items-center gap-2 bg-emerald-500 text-white shadow-md shadow-emerald-200 ring-2 ring-emerald-500 ring-offset-2">
+                <span>💚</span> I Like (Me...)
+              </button>
+              <button onclick="setBuilderMode('dislike')" id="mode-dislike" class="btn-tactile px-4 py-2.5 rounded-2xl font-extrabold text-sm flex items-center gap-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200">
+                <span>❤️</span> I Don't Like (No me...)
+              </button>
+              <button onclick="setBuilderMode('question')" id="mode-question" class="btn-tactile px-4 py-2.5 rounded-2xl font-extrabold text-sm flex items-center gap-2 bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200">
+                <span>🗣️</span> Ask a Friend (¿Te...?)
+              </button>
+            </div>
+          </div>
+
+          <!-- Audio & Randomize Controls -->
+          <div class="flex items-center gap-2.5 self-start sm:self-end">
+            <button onclick="randomizeBuilder()" class="btn-tactile px-3.5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm flex items-center gap-1.5" title="Pick a random combination">
+              <span>🎲</span> Random
+            </button>
+            <button onclick="speakCurrentSentence()" id="listen-btn" class="btn-tactile px-5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold text-sm shadow-md shadow-amber-200/80 flex items-center gap-2">
+              <span>🔊</span> Listen
+            </button>
+          </div>
+        </div>
+
+        <!-- Assembled Output Display -->
+        <div class="py-6 sm:py-8 text-center">
+          <!-- Grammar Rule Pill -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold mb-4 bg-emerald-100 text-emerald-800" id="grammar-badge">
+            <span>✨ Singular Noun</span>
+            <span>→</span>
+            <span>Uses <strong>gusta</strong></span>
+          </div>
+
+          <!-- Big Spanish Sentence Blocks -->
+          <div id="sentence-blocks" class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-2xl sm:text-4xl md:text-5xl font-black tracking-tight my-2">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Phonetic Guide -->
+          <p id="phonetic-display" class="text-sm sm:text-base font-semibold text-slate-400 italic mt-3">
+            / meh GOOS-tah ehl kah-FEH /
+          </p>
+
+          <!-- English Translation -->
+          <div class="mt-4 inline-block bg-slate-50 border border-slate-200/80 rounded-2xl px-5 py-2.5">
+            <p id="english-display" class="text-base sm:text-lg font-bold text-slate-700">
+              "I like coffee."
+            </p>
+            <p id="literal-display" class="text-xs text-slate-400 mt-0.5">
+              Literal meaning: "The coffee is pleasing to me."
+            </p>
+          </div>
+        </div>
+
+        <!-- Grammar Breakdown Footer -->
+        <div id="grammar-explanation" class="bg-slate-50 rounded-2xl p-4 border border-slate-200/70 flex items-start gap-3 text-xs sm:text-sm text-slate-600">
+          <span class="text-lg">🧠</span>
+          <p id="grammar-explanation-text">
+            <strong>Why "gusta"?</strong> Because <em>el café</em> (coffee) is a single thing. Whenever you like just one thing, use <strong>gusta</strong>!
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 2: Categorized Vocabulary Deck -->
+      <div class="space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <h3 class="text-lg font-extrabold text-slate-800 flex items-center gap-2">
+            <span>Step 2 · Tap Any Card to Build Your Sentence</span>
+          </h3>
+          <!-- Category Filter Pills -->
+          <div class="flex flex-wrap gap-1.5 text-xs font-bold">
+            <button onclick="filterVocab('all')" id="filter-all" class="vocab-filter px-3 py-1.5 rounded-xl bg-slate-800 text-white">All Cards (15)</button>
+            <button onclick="filterVocab('singular')" id="filter-singular" class="vocab-filter px-3 py-1.5 rounded-xl bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50">1️⃣ Singular Nouns</button>
+            <button onclick="filterVocab('plural')" id="filter-plural" class="vocab-filter px-3 py-1.5 rounded-xl bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-50">🔢 Plural Nouns</button>
+            <button onclick="filterVocab('verb')" id="filter-verb" class="vocab-filter px-3 py-1.5 rounded-xl bg-white text-amber-700 border border-amber-200 hover:bg-amber-50">🏃 Actions / Verbs</button>
+          </div>
+        </div>
+
+        <!-- Vocabulary Grid -->
+        <div id="vocab-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+          <!-- Cards rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODULE 2: 25-QUESTION INTERACTIVE PRACTICE QUIZ           -->
+    <!-- ========================================================= -->
+    <section id="view-quiz" class="hidden animate-pop">
+      <div class="max-w-3xl mx-auto">
+        
+        <!-- Quiz Progress & Score Header -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-4 sm:p-5 mb-5 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <div class="flex items-center gap-2">
+              <span id="quiz-section-badge" class="px-3 py-1 rounded-xl bg-purple-100 text-purple-800 text-xs font-extrabold">
+                Part 1 · Fill in the Blank
+              </span>
+              <span class="text-sm font-bold text-slate-500">
+                Question <span id="quiz-current-num" class="text-slate-900">1</span> of <span id="quiz-total-num">25</span>
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3 text-sm font-extrabold">
+              <div class="px-3 py-1 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
+                <span>🔥 Streak:</span>
+                <span id="quiz-streak">0</span>
+              </div>
+              <div class="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                <span>⭐ Score:</span>
+                <span id="quiz-score">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+            <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300 rounded-full" style="width: 4%;"></div>
+          </div>
+        </div>
+
+        <!-- Quiz Question Card -->
+        <div id="quiz-card" class="bg-white rounded-3xl border border-slate-200 shadow-lg p-6 sm:p-8">
+          <div id="quiz-active-area">
+            <p id="quiz-instruction" class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+              Choose the correct Spanish phrase
+            </p>
+            <h2 id="quiz-prompt" class="text-xl sm:text-2xl font-black text-slate-900 mb-2">
+              __________ el helado.
+            </h2>
+            <p id="quiz-translation-hint" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-50 text-sky-800 text-sm font-bold mb-6">
+              <span>🇺🇸</span> <span id="quiz-english-text">I like ice cream.</span>
+            </p>
+
+            <!-- Options Grid -->
+            <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Instant Feedback Drawer -->
+            <div id="quiz-feedback" class="hidden mt-6 p-4 rounded-2xl border-2">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3">
+                  <span id="quiz-feedback-icon" class="text-2xl">🎉</span>
+                  <div>
+                    <h4 id="quiz-feedback-title" class="font-extrabold text-base">¡Excelente!</h4>
+                    <p id="quiz-feedback-explanation" class="text-sm mt-0.5">Explanation goes here.</p>
+                  </div>
+                </div>
+                <button onclick="speakQuizAnswer()" class="px-3 py-1.5 rounded-xl bg-white/80 hover:bg-white text-slate-800 text-xs font-extrabold border border-slate-200 shrink-0 flex items-center gap-1">
+                  <span>🔊</span> Hear It
+                </button>
+              </div>
+              <div class="mt-4 flex justify-end">
+                <button onclick="nextQuizQuestion()" id="quiz-next-btn" class="btn-tactile px-6 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm flex items-center gap-2">
+                  <span>Next Question</span> <span>→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz Completion Screen -->
+          <div id="quiz-results-area" class="hidden text-center py-6">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900">¡Felicidades! Quiz Complete!</h2>
+            <p class="text-slate-600 mt-1">You mastered all 25 questions on <em>me gusta</em> &amp; <em>no me gustan</em>.</p>
+
+            <div class="grid grid-cols-3 gap-3 max-w-md mx-auto my-6">
+              <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                <div class="text-2xl font-black text-emerald-700" id="final-score">25/25</div>
+                <div class="text-xs font-bold text-emerald-600 mt-1">Final Score</div>
+              </div>
+              <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                <div class="text-2xl font-black text-amber-700" id="final-accuracy">100%</div>
+                <div class="text-xs font-bold text-amber-600 mt-1">Accuracy</div>
+              </div>
+              <div class="bg-purple-50 border border-purple-200 rounded-2xl p-4">
+                <div class="text-2xl font-black text-purple-700" id="final-streak">0</div>
+                <div class="text-xs font-bold text-purple-600 mt-1">Best Streak</div>
+              </div>
+            </div>
+
+            <button onclick="restartQuiz()" class="btn-tactile px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-base shadow-lg shadow-emerald-200">
+              🔄 Practice Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- MODULE 3: SPEED SORTING MINI-GAME ("GUSTA VS. GUSTAN")    -->
+    <!-- ========================================================= -->
+    <section id="view-game" class="hidden animate-pop">
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-3xl border-2 border-indigo-200 shadow-xl shadow-indigo-100/50 p-6 sm:p-8 text-center">
+          
+          <!-- Start Screen -->
+          <div id="game-start-screen" class="py-4">
+            <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-indigo-500 to-purple-500 text-white text-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
+              ⚡
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Gusta vs. Gustan Speed Sorter</h2>
+            <p class="text-slate-600 text-sm sm:text-base max-w-md mx-auto mt-2">
+              You have <strong>45 seconds</strong>! Sort as many Spanish nouns and actions as you can into the right bucket before time runs out.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto my-6 text-left">
+              <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
+                <div class="font-black text-emerald-800 text-base">👈 Use GUSTA</div>
+                <p class="text-xs text-emerald-700 mt-1">For <strong>1 singular thing</strong> (<em>el café</em>) OR <strong>any action/verb</strong> (<em>bailar, correr</em>).</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200">
+                <div class="font-black text-indigo-800 text-base">👉 Use GUSTAN</div>
+                <p class="text-xs text-indigo-700 mt-1">ONLY for <strong>plural things</strong> (<em>los tacos, las arañas</em>).</p>
+              </div>
+            </div>
+
+            <button onclick="startSpeedGame()" class="btn-tactile px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-lg shadow-lg shadow-indigo-200">
+              🚀 Start 45s Challenge
+            </button>
+          </div>
+
+          <!-- Active Gameplay Screen -->
+          <div id="game-play-screen" class="hidden">
+            <!-- HUD -->
+            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3.5 border border-slate-200 mb-6">
+              <div class="text-left">
+                <span class="text-xs font-bold text-slate-400 uppercase block">Time Left</span>
+                <span id="game-timer" class="text-2xl font-black text-rose-600">45s</span>
+              </div>
+              <div>
+                <span class="text-xs font-bold text-slate-400 uppercase block">Combo</span>
+                <span id="game-combo" class="text-xl font-black text-amber-500">x1 🔥</span>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-bold text-slate-400 uppercase block">Points</span>
+                <span id="game-score" class="text-2xl font-black text-indigo-600">0</span>
+              </div>
+            </div>
+
+            <!-- Prompt Card -->
+            <div id="game-card-box" class="bg-gradient-to-b from-slate-50 to-white border-2 border-slate-200 rounded-3xl p-8 mb-6 shadow-inner transition-all">
+              <div id="game-item-emoji" class="text-5xl sm:text-6xl mb-3">🌮</div>
+              <div id="game-item-spanish" class="text-3xl sm:text-4xl font-black text-slate-900">los tacos</div>
+              <div id="game-item-english" class="text-sm sm:text-base font-bold text-slate-500 mt-1">(tacos)</div>
+              <div id="game-toast" class="h-6 mt-3 text-sm font-extrabold"></div>
+            </div>
+
+            <!-- Choice Buttons -->
+            <div class="grid grid-cols-2 gap-4">
+              <button onclick="handleGameAnswer('gusta')" class="btn-tactile py-5 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-200 flex flex-col items-center">
+                <span class="text-xl sm:text-2xl font-black">GUSTA</span>
+                <span class="text-xs font-semibold text-emerald-100 mt-1">1 Thing or Action</span>
+              </button>
+              <button onclick="handleGameAnswer('gustan')" class="btn-tactile py-5 px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-200 flex flex-col items-center">
+                <span class="text-xl sm:text-2xl font-black">GUSTAN</span>
+                <span class="text-xs font-semibold text-indigo-100 mt-1">Plural Things</span>
+              </button>
+            </div>
+            <p class="text-xs text-slate-400 font-semibold mt-4">Tip: You can also use Left Arrow (←) for Gusta and Right Arrow (→) for Gustan!</p>
+          </div>
+
+          <!-- Game Over Screen -->
+          <div id="game-over-screen" class="hidden py-4">
+            <div class="text-6xl mb-3">⏱️</div>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900">¡Tiempo! Time's Up!</h2>
+            <p class="text-slate-600 text-sm mt-1">Awesome reflexes! Here is how you did:</p>
+
+            <div class="grid grid-cols-2 gap-4 max-w-sm mx-auto my-6">
+              <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-4">
+                <div id="game-final-score" class="text-3xl font-black text-indigo-700">0</div>
+                <div class="text-xs font-bold text-indigo-600 mt-1">Total Points</div>
+              </div>
+              <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                <div id="game-final-correct" class="text-3xl font-black text-emerald-700">0</div>
+                <div class="text-xs font-bold text-emerald-600 mt-1">Sorted Correctly</div>
+              </div>
+            </div>
+
+            <button onclick="startSpeedGame()" class="btn-tactile px-7 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-base shadow-lg shadow-indigo-200">
+              ⚡ Play Again
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. DATA REPOSITORY (VOCABULARY & 25-QUESTION QUIZ)
+    // =========================================================================
+    const VOCAB_ITEMS = [
+      // Singular Nouns
+      { id: 'cafe', category: 'singular', spanish: 'el café', phonetic: 'ehl kah-FEH', english: 'coffee', emoji: '☕' },
+      { id: 'pizza', category: 'singular', spanish: 'la pizza', phonetic: 'lah PEET-sah', english: 'pizza', emoji: '🍕' },
+      { id: 'chocolate', category: 'singular', spanish: 'el chocolate', phonetic: 'ehl choh-koh-LAH-teh', english: 'chocolate', emoji: '🍫' },
+      { id: 'brocoli', category: 'singular', spanish: 'el brócoli', phonetic: 'ehl BROH-koh-lee', english: 'broccoli', emoji: '🥦' },
+      { id: 'trafico', category: 'singular', spanish: 'el tráfico', phonetic: 'ehl TRAH-fee-koh', english: 'traffic', emoji: '🚗' },
+
+      // Plural Nouns
+      { id: 'tacos', category: 'plural', spanish: 'los tacos', phonetic: 'lohs TAH-kohs', english: 'tacos', emoji: '🌮' },
+      { id: 'aranas', category: 'plural', spanish: 'las arañas', phonetic: 'lahs ah-RAHN-yahs', english: 'spiders', emoji: '🕷️' },
+      { id: 'perros', category: 'plural', spanish: 'los perros', phonetic: 'lohs PEH-rrohs', english: 'dogs', emoji: '🐶' },
+      { id: 'libros', category: 'plural', spanish: 'los libros', phonetic: 'lohs LEE-brohs', english: 'books', emoji: '📚' },
+      { id: 'manzanas', category: 'plural', spanish: 'las manzanas', phonetic: 'lahs mahn-SAH-nahs', english: 'apples', emoji: '🍎' },
+
+      // Actions / Verbs
+      { id: 'bailar', category: 'verb', spanish: 'bailar', phonetic: 'by-LAHR', english: 'to dance', emoji: '💃' },
+      { id: 'dormir', category: 'verb', spanish: 'dormir', phonetic: 'dohr-MEER', english: 'to sleep', emoji: '😴' },
+      { id: 'estudiar', category: 'verb', spanish: 'estudiar', phonetic: 'ehs-too-DYAHR', english: 'to study', emoji: '📝' },
+      { id: 'cocinar', category: 'verb', spanish: 'cocinar', phonetic: 'koh-see-NAHR', english: 'to cook', emoji: '🍳' },
+      { id: 'viajar', category: 'verb', spanish: 'viajar', phonetic: 'byah-HAHR', english: 'to travel', emoji: '✈️' }
+    ];
+
+    const QUIZ_QUESTIONS = [
+      // Part 1: Fill in the Blank (1-10)
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ el helado.",
+        english: "I like ice cream.",
+        options: ["Me gusta", "No me gusta", "Me gustan", "No me gustan"],
+        correct: "Me gusta",
+        fullSpanish: "Me gusta el helado.",
+        explanation: "'El helado' (ice cream) is a singular noun, so we use 'Me gusta'."
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ las arañas.",
+        english: "I don't like spiders.",
+        options: ["No me gusta", "No me gustan", "Me gustan", "Me no gustan"],
+        correct: "No me gustan",
+        fullSpanish: "No me gustan las arañas.",
+        explanation: "'Las arañas' (spiders) is plural, and it's negative, so we use 'No me gustan'."
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ bailar.",
+        english: "I like to dance.",
+        options: ["Me gustan", "No me gusta", "Me gusta", "No me gustan"],
+        correct: "Me gusta",
+        fullSpanish: "Me gusta bailar.",
+        explanation: "'Bailar' (to dance) is an action/verb. Verbs always use singular 'gusta'!"
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ los lunes.",
+        english: "I don't like Mondays.",
+        options: ["No me gusta", "Me gustan", "No me gustan", "Me gusta"],
+        correct: "No me gustan",
+        fullSpanish: "No me gustan los lunes.",
+        explanation: "'Los lunes' (Mondays) is plural ('los'), so we need 'No me gustan'."
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ la lluvia.",
+        english: "I don't like the rain.",
+        options: ["No me gustan", "No me gusta", "Me gusta", "Me gustan"],
+        correct: "No me gusta",
+        fullSpanish: "No me gusta la lluvia.",
+        explanation: "'La lluvia' (the rain) is a single thing, so we use 'No me gusta'."
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ los tacos.",
+        english: "I like tacos.",
+        options: ["Me gusta", "No me gustan", "Me gustan", "No me gusta"],
+        correct: "Me gustan",
+        fullSpanish: "Me gustan los tacos.",
+        explanation: "'Los tacos' is plural! Add the '-n' to make 'Me gustan'."
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ estudiar.",
+        english: "I don't like to study.",
+        options: ["No me gustan", "Me gusta", "No me gusta", "Me gustan"],
+        correct: "No me gusta",
+        fullSpanish: "No me gusta estudiar.",
+        explanation: "'Estudiar' (to study) is an action/verb, so it takes singular 'No me gusta'."
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ las películas de terror.",
+        english: "I like horror movies.",
+        options: ["Me gustan", "Me gusta", "No me gustan", "No me gusta"],
+        correct: "Me gustan",
+        fullSpanish: "Me gustan las películas de terror.",
+        explanation: "'Las películas' (movies) is plural, so we use 'Me gustan'."
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ el café frío.",
+        english: "I don't like cold coffee.",
+        options: ["No me gustan", "Me gusta", "No me gusta", "Me gustan"],
+        correct: "No me gusta",
+        fullSpanish: "No me gusta el café frío.",
+        explanation: "'El café frío' (cold coffee) is one singular noun, so use 'No me gusta'."
+      },
+      {
+        part: "Part 1 · Fill in the Blank",
+        instruction: "Choose the correct phrase to complete the sentence:",
+        prompt: "__________ viajar y explorar.",
+        english: "I like to travel and explore.",
+        options: ["Me gustan", "Me gusta", "No me gusta", "No me gustan"],
+        correct: "Me gusta",
+        fullSpanish: "Me gusta viajar y explorar.",
+        explanation: "Even when you list two actions/verbs ('viajar y explorar'), Spanish always uses singular 'Me gusta'!"
+      },
+
+      // Part 2: Translate to Spanish (11-18)
+      {
+        part: "Part 2 · Translate to Spanish",
+        instruction: "Select the accurate Spanish translation:",
+        prompt: "How do you say 'I like pizza' (la pizza)?",
+        english: "I like pizza.",
+        options: ["Me gustan la pizza.", "Me gusta la pizza.", "No me gusta la pizza.", "Te gusta la pizza."],
+        correct: "Me gusta la pizza.",
+        fullSpanish: "Me gusta la pizza.",
+        explanation: "'La pizza' is singular, so 'Me gusta la pizza' is correct."
+      },
+      {
+        part: "Part 2 · Translate to Spanish",
+        instruction: "Select the accurate Spanish translation:",
+        prompt: "How do you say 'I don't like dogs' (los perros)?",
+        english: "I don't like dogs.",
+        options: ["No me gusta los perros.", "Me no gustan los perros.", "No me gustan los perros.", "Me gustan los perros."],
+        correct: "No me gustan los perros.",
+        fullSpanish: "No me gustan los perros.",
+        explanation: "'No' goes at the very beginning, and 'los perros' (dogs) is plural, requiring 'gustan'."
+      },
+      {
+        part: "Part 2 · Translate to Spanish",
+        instruction: "Select the accurate Spanish translation:",
+        prompt: "How do you say 'I like to sleep' (dormir)?",
+        english: "I like to sleep.",
+        options: ["Me gusta dormir.", "Me gustan dormir.", "No me gusta dormir.", "Me gusta el dormir."],
+        correct: "Me gusta dormir.",
+        fullSpanish: "Me gusta dormir.",
+        explanation: "Actions/verbs like 'dormir' attach directly after 'Me gusta'."
+      },
+      {
+        part: "Part 2 · Translate to Spanish",
+        instruction: "Select the accurate Spanish translation:",
+        prompt: "How do you say 'I don't like snakes' (las serpientes)?",
+        english: "I don't like snakes.",
+        options: ["No me gusta las serpientes.", "No me gustan las serpientes.", "Me gustan las serpientes.", "No gustan las serpientes."],
+        correct: "No me gustan las serpientes.",
+        fullSpanish: "No me gustan las serpientes.",
+        explanation: "'Las serpientes' (snakes) is plural, so we use 'No me gustan'."
+      },
+      {
+        part: "Part 2 · Translate to Spanish",
+        instruction: "Select the accurate Spanish translation:",
+        prompt: "How do you say 'I like music' (la música)?",
+        english: "I like music.",
+        options: ["Me gustan la música.", "No me gusta la música.", "Me gusta la música.", "Te gusta la música."],
+        correct: "Me gusta la música.",
+        fullSpanish: "Me gusta la música.",
+        explanation: "'La música' is singular, so we use 'Me gusta'."
+      },
+      {
+        part: "Part 2 · Translate to Spanish",
+        instruction: "Select the accurate Spanish translation:",
+        prompt: "How do you say 'I don't like to cook' (cocinar)?",
+        english: "I don't like to cook.",
+        options: ["No me gusta cocinar.", "No me gustan cocinar.", "Me no gusta cocinar.", "Me gusta cocinar."],
+        correct: "No me gusta cocinar.",
+        fullSpanish: "No me gusta cocinar.",
+        explanation: "'Cocinar' (to cook) is a verb, so it uses singular 'No me gusta'."
+      },
+      {
+        part: "Part 2 · Translate to Spanish",
+        instruction: "Select the accurate Spanish translation:",
+        prompt: "How do you say 'I like books' (los libros)?",
+        english: "I like books.",
+        options: ["Me gusta los libros.", "No me gustan los libros.", "Me gustan los libros.", "Me gustan el libros."],
+        correct: "Me gustan los libros.",
+        fullSpanish: "Me gustan los libros.",
+        explanation: "'Los libros' (books) is plural, so add '-n' to get 'Me gustan'."
+      },
+      {
+        part: "Part 2 · Translate to Spanish",
+        instruction: "Select the accurate Spanish translation:",
+        prompt: "How do you say 'I don't like traffic' (el tráfico)?",
+        english: "I don't like traffic.",
+        options: ["No me gustan el tráfico.", "No me gusta el tráfico.", "Me no gusta el tráfico.", "Me gusta el tráfico."],
+        correct: "No me gusta el tráfico.",
+        fullSpanish: "No me gusta el tráfico.",
+        explanation: "'El tráfico' is singular, so we say 'No me gusta el tráfico'."
+      },
+
+      // Part 3: Fix the Mistake (19-22)
+      {
+        part: "Part 3 · Fix the Mistake",
+        instruction: "Spot the grammar error and pick the corrected sentence:",
+        prompt: "❌ Incorrect: 'Me gustan el chocolate.'",
+        english: "I like chocolate.",
+        options: ["Me gusta el chocolate.", "No me gustan el chocolate.", "Me gustan los chocolate.", "Me gusto el chocolate."],
+        correct: "Me gusta el chocolate.",
+        fullSpanish: "Me gusta el chocolate.",
+        explanation: "'El chocolate' is singular! Drop the '-n' so it becomes 'Me gusta'."
+      },
+      {
+        part: "Part 3 · Fix the Mistake",
+        instruction: "Spot the grammar error and pick the corrected sentence:",
+        prompt: "❌ Incorrect: 'Me no gusta el brócoli.'",
+        english: "I don't like broccoli.",
+        options: ["No me gusta el brócoli.", "No me gustan el brócoli.", "Me gusta no el brócoli.", "No gusta me el brócoli."],
+        correct: "No me gusta el brócoli.",
+        fullSpanish: "No me gusta el brócoli.",
+        explanation: "In Spanish, 'No' ALWAYS goes at the very beginning before 'me' -> 'No me gusta'."
+      },
+      {
+        part: "Part 3 · Fix the Mistake",
+        instruction: "Spot the grammar error and pick the corrected sentence:",
+        prompt: "❌ Incorrect: 'No me gusta las frutas.'",
+        english: "I don't like fruits.",
+        options: ["No me gustan las frutas.", "Me no gustan las frutas.", "No me gusta la frutas.", "Me gustan las frutas."],
+        correct: "No me gustan las frutas.",
+        fullSpanish: "No me gustan las frutas.",
+        explanation: "'Las frutas' (fruits) is plural, so 'gusta' must become 'gustan'."
+      },
+      {
+        part: "Part 3 · Fix the Mistake",
+        instruction: "Spot the grammar error and pick the corrected sentence:",
+        prompt: "❌ Incorrect: 'Me gustan nadar.'",
+        english: "I like to swim.",
+        options: ["Me gusta nadar.", "No me gustan nadar.", "Me gustan el nadar.", "Te gustan nadar."],
+        correct: "Me gusta nadar.",
+        fullSpanish: "Me gusta nadar.",
+        explanation: "'Nadar' (to swim) is an action/verb, which always takes singular 'Me gusta'."
+      },
+
+      // Part 4: Multiple Choice Mastery (23-25)
+      {
+        part: "Part 4 · Final Mastery",
+        instruction: "Pick the best Spanish translation:",
+        prompt: "Which sentence means 'I don't like apples'?",
+        english: "I don't like apples.",
+        options: ["No me gusta las manzanas.", "No me gustan las manzanas.", "Me no gustan las manzanas.", "Me gustan las manzanas."],
+        correct: "No me gustan las manzanas.",
+        fullSpanish: "No me gustan las manzanas.",
+        explanation: "'Las manzanas' is plural + negative = 'No me gustan las manzanas'."
+      },
+      {
+        part: "Part 4 · Final Mastery",
+        instruction: "Pick the best Spanish translation:",
+        prompt: "Which sentence means 'I like to run and sing'?",
+        english: "I like to run and sing.",
+        options: ["Me gustan correr y cantar.", "No me gusta correr y cantar.", "Me gusta correr y cantar.", "Te gusta correr y cantar."],
+        correct: "Me gusta correr y cantar.",
+        fullSpanish: "Me gusta correr y cantar.",
+        explanation: "Actions/verbs always use singular 'Me gusta', even when combined!"
+      },
+      {
+        part: "Part 4 · Final Mastery",
+        instruction: "Pick the best Spanish translation:",
+        prompt: "Which sentence means 'I don't like loud parties'?",
+        english: "I don't like loud parties.",
+        options: ["No me gusta las fiestas ruidosas.", "Me gustan las fiestas ruidosas.", "No me gustan las fiestas ruidosas.", "Me no gustan las fiestas ruidosas."],
+        correct: "No me gustan las fiestas ruidosas.",
+        fullSpanish: "No me gustan las fiestas ruidosas.",
+        explanation: "'Las fiestas ruidosas' (loud parties) is plural + negative = 'No me gustan'."
+      }
+    ];
+
+    // =========================================================================
+    // 2. TAB NAVIGATION LOGIC
+    // =========================================================================
+    function switchTab(tabName) {
+      const views = ['builder', 'quiz', 'game'];
+      views.forEach(v => {
+        const section = document.getElementById(`view-${v}`);
+        const btn = document.getElementById(`tab-${v}`);
+        if (v === tabName) {
+          section.classList.remove('hidden');
+          btn.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
+          btn.classList.remove('text-slate-600');
+        } else {
+          section.classList.add('hidden');
+          btn.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
+          btn.classList.add('text-slate-600');
+        }
+      });
+
+      // Stop game timer if navigating away from game
+      if (tabName !== 'game' && gameTimerInterval) {
+        clearInterval(gameTimerInterval);
+      }
+    }
+
+    // =========================================================================
+    // 3. TEXT-TO-SPEECH (WEB SPEECH API)
+    // =========================================================================
+    function speakSpanish(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'es-MX';
+      utterance.rate = 0.92;
+
+      // Prefer a natural Spanish voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const spanishVoice = voices.find(v => v.lang.startsWith('es-')) || voices.find(v => v.lang.includes('es'));
+      if (spanishVoice) utterance.voice = spanishVoice;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // =========================================================================
+    // 4. SENTENCE BUILDER LAB LOGIC
+    // =========================================================================
+    let builderState = {
+      mode: 'like', // 'like' | 'dislike' | 'question'
+      selectedItem: VOCAB_ITEMS[0],
+      filter: 'all'
+    };
+
+    function setBuilderMode(mode) {
+      builderState.mode = mode;
+      const modes = ['like', 'dislike', 'question'];
+      const styles = {
+        like: 'bg-emerald-500 text-white shadow-md shadow-emerald-200 ring-2 ring-emerald-500 ring-offset-2',
+        dislike: 'bg-rose-500 text-white shadow-md shadow-rose-200 ring-2 ring-rose-500 ring-offset-2',
+        question: 'bg-sky-500 text-white shadow-md shadow-sky-200 ring-2 ring-sky-500 ring-offset-2'
+      };
+      const inactiveStyles = {
+        like: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200',
+        dislike: 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200',
+        question: 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200'
+      };
+
+      modes.forEach(m => {
+        const btn = document.getElementById(`mode-${m}`);
+        btn.className = `btn-tactile px-4 py-2.5 rounded-2xl font-extrabold text-sm flex items-center gap-2 transition-all ${m === mode ? styles[m] : inactiveStyles[m]}`;
+      });
+
+      const stageCard = document.getElementById('stage-card');
+      stageCard.classList.remove('border-emerald-200', 'border-rose-200', 'border-sky-200');
+      if (mode === 'like') stageCard.classList.add('border-emerald-200');
+      if (mode === 'dislike') stageCard.classList.add('border-rose-200');
+      if (mode === 'question') stageCard.classList.add('border-sky-200');
+
+      renderBuilderStage();
+    }
+
+    function selectVocabItem(id) {
+      const item = VOCAB_ITEMS.find(i => i.id === id);
+      if (!item) return;
+      builderState.selectedItem = item;
+      renderBuilderStage();
+      renderVocabGrid();
+      speakCurrentSentence();
+    }
+
+    function randomizeBuilder() {
+      const modes = ['like', 'dislike', 'question'];
+      const randomMode = modes[Math.floor(Math.random() * modes.length)];
+      const randomItem = VOCAB_ITEMS[Math.floor(Math.random() * VOCAB_ITEMS.length)];
+      builderState.selectedItem = randomItem;
+      setBuilderMode(randomMode);
+      renderVocabGrid();
+      speakCurrentSentence();
+    }
+
+    function renderBuilderStage() {
+      const { mode, selectedItem } = builderState;
+      const isPlural = selectedItem.category === 'plural';
+      const verbForm = isPlural ? 'gustan' : 'gusta';
+      const verbPhonetic = isPlural ? 'GOOS-tahn' : 'GOOS-tah';
+
+      // Build pieces
+      let prefixText = '';
+      let prefixPhonetic = '';
+      let prefixColor = '';
+      let suffixPunctuation = '.';
+      let englishSentence = '';
+      let literalSentence = '';
+
+      if (mode === 'like') {
+        prefixText = 'Me';
+        prefixPhonetic = 'meh';
+        prefixColor = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+        englishSentence = `"I like ${selectedItem.english}."`;
+        literalSentence = `Literal meaning: "${selectedItem.english} ${isPlural ? 'are' : 'is'} pleasing to me."`;
+      } else if (mode === 'dislike') {
+        prefixText = 'No me';
+        prefixPhonetic = 'noh meh';
+        prefixColor = 'bg-rose-100 text-rose-800 border-rose-300';
+        englishSentence = `"I don't like ${selectedItem.english}."`;
+        literalSentence = `Literal meaning: "${selectedItem.english} ${isPlural ? 'are' : 'is'} NOT pleasing to me."`;
+      } else {
+        prefixText = '¿Te';
+        prefixPhonetic = 'teh';
+        prefixColor = 'bg-sky-100 text-sky-800 border-sky-300';
+        suffixPunctuation = '?';
+        englishSentence = `"Do you like ${selectedItem.english}?"`;
+        literalSentence = `Literal meaning: "${isPlural ? 'Are' : 'Is'} ${selectedItem.english} pleasing to you?"`;
+      }
+
+      const verbColor = isPlural
+        ? 'bg-indigo-100 text-indigo-800 border-indigo-300'
+        : 'bg-amber-100 text-amber-800 border-amber-300';
+
+      // Render Sentence Blocks
+      const blocksContainer = document.getElementById('sentence-blocks');
+      blocksContainer.innerHTML = `
+        <span class="px-4 py-2 rounded-2xl border-2 ${prefixColor} shadow-sm">${prefixText}</span>
+        <span class="px-4 py-2 rounded-2xl border-2 ${verbColor} shadow-sm">${verbForm}</span>
+        <span class="px-4 py-2 rounded-2xl bg-slate-100 text-slate-900 border-2 border-slate-200 shadow-sm">
+          ${selectedItem.emoji} ${selectedItem.spanish}${suffixPunctuation}
+        </span>
+      `;
+
+      // Grammar Badge
+      const badge = document.getElementById('grammar-badge');
+      if (selectedItem.category === 'plural') {
+        badge.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold mb-4 bg-indigo-100 text-indigo-800';
+        badge.innerHTML = `<span>🔢 Plural Noun</span> <span>→</span> <span>Add <strong>-n</strong> for <strong>gustan</strong></span>`;
+      } else if (selectedItem.category === 'verb') {
+        badge.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold mb-4 bg-amber-100 text-amber-800';
+        badge.innerHTML = `<span>🏃 Action / Verb</span> <span>→</span> <span>Always uses singular <strong>gusta</strong></span>`;
+      } else {
+        badge.className = 'inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-extrabold mb-4 bg-emerald-100 text-emerald-800';
+        badge.innerHTML = `<span>1️⃣ Singular Noun</span> <span>→</span> <span>Uses singular <strong>gusta</strong></span>`;
+      }
+
+      // Phonetic & English
+      document.getElementById('phonetic-display').textContent = `/ ${prefixPhonetic} ${verbPhonetic} ${selectedItem.phonetic} /`;
+      document.getElementById('english-display').textContent = englishSentence;
+      document.getElementById('literal-display').textContent = literalSentence;
+
+      // Grammar Explanation Box
+      const expText = document.getElementById('grammar-explanation-text');
+      if (selectedItem.category === 'plural') {
+        expText.innerHTML = `<strong>Why "gustan"?</strong> Because <em>${selectedItem.spanish}</em> (${selectedItem.english}) is plural! Whenever the thing you like is plural, add an <strong>-n</strong> to make <strong>gustan</strong>.`;
+      } else if (selectedItem.category === 'verb') {
+        expText.innerHTML = `<strong>Why "gusta"?</strong> Because <em>${selectedItem.spanish}</em> (${selectedItem.english}) is an action (verb). In Spanish, actions ALWAYS take singular <strong>gusta</strong>!`;
+      } else {
+        expText.innerHTML = `<strong>Why "gusta"?</strong> Because <em>${selectedItem.spanish}</em> (${selectedItem.english}) is a single thing. Singular nouns always pair with <strong>gusta</strong>.`;
+      }
+    }
+
+    function speakCurrentSentence() {
+      const { mode, selectedItem } = builderState;
+      const verbForm = selectedItem.category === 'plural' ? 'gustan' : 'gusta';
+      let rawText = '';
+      if (mode === 'like') rawText = `Me ${verbForm} ${selectedItem.spanish}.`;
+      if (mode === 'dislike') rawText = `No me ${verbForm} ${selectedItem.spanish}.`;
+      if (mode === 'question') rawText = `¿Te ${verbForm} ${selectedItem.spanish}?`;
+      speakSpanish(rawText);
+    }
+
+    function filterVocab(category) {
+      builderState.filter = category;
+      document.querySelectorAll('.vocab-filter').forEach(btn => {
+        btn.classList.remove('bg-slate-800', 'text-white');
+        btn.classList.add('bg-white');
+      });
+      const activeBtn = document.getElementById(`filter-${category}`);
+      activeBtn.classList.remove('bg-white');
+      activeBtn.classList.add('bg-slate-800', 'text-white');
+      renderVocabGrid();
+    }
+
+    function renderVocabGrid() {
+      const grid = document.getElementById('vocab-grid');
+      const items = builderState.filter === 'all'
+        ? VOCAB_ITEMS
+        : VOCAB_ITEMS.filter(i => i.category === builderState.filter);
+
+      const categoryTags = {
+        singular: { label: '1 Thing', cls: 'bg-emerald-50 text-emerald-700' },
+        plural: { label: 'Plural', cls: 'bg-indigo-50 text-indigo-700' },
+        verb: { label: 'Action', cls: 'bg-amber-50 text-amber-700' }
+      };
+
+      grid.innerHTML = items.map(item => {
+        const isSelected = builderState.selectedItem.id === item.id;
+        const tag = categoryTags[item.category];
+        return `
+          <button onclick="selectVocabItem('${item.id}')" class="btn-tactile text-left p-3.5 rounded-2xl border-2 transition-all flex flex-col justify-between ${
+            isSelected
+              ? 'bg-emerald-50/70 border-emerald-500 shadow-md shadow-emerald-100'
+              : 'bg-white border-slate-200/90 hover:border-slate-300 hover:shadow-sm'
+          }">
+            <div class="flex items-center justify-between w-full mb-2">
+              <span class="text-2xl sm:text-3xl">${item.emoji}</span>
+              <span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold uppercase ${tag.cls}">${tag.label}</span>
+            </div>
+            <div>
+              <div class="font-extrabold text-slate-900 text-sm sm:text-base leading-tight">${item.spanish}</div>
+              <div class="text-xs font-medium text-slate-500 mt-0.5">${item.english}</div>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 5. 25-QUESTION PRACTICE QUIZ LOGIC
+    // =========================================================================
+    let quizState = {
+      currentIndex: 0,
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      answered: false
+    };
+
+    function renderQuizQuestion() {
+      const q = QUIZ_QUESTIONS[quizState.currentIndex];
+      quizState.answered = false;
+
+      document.getElementById('quiz-section-badge').textContent = q.part;
+      document.getElementById('quiz-current-num').textContent = quizState.currentIndex + 1;
+      document.getElementById('quiz-total-num').textContent = QUIZ_QUESTIONS.length;
+      document.getElementById('quiz-streak').textContent = quizState.streak;
+      document.getElementById('quiz-score').textContent = quizState.score;
+
+      const pct = ((quizState.currentIndex) / QUIZ_QUESTIONS.length) * 100;
+      document.getElementById('quiz-progress-bar').style.width = `${Math.max(4, pct)}%`;
+
+      document.getElementById('quiz-instruction').textContent = q.instruction;
+      document.getElementById('quiz-prompt').textContent = q.prompt;
+      document.getElementById('quiz-english-text').textContent = q.english;
+
+      // Hide feedback
+      const feedbackEl = document.getElementById('quiz-feedback');
+      feedbackEl.classList.add('hidden');
+
+      // Render options
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = q.options.map((opt, idx) => `
+        <button onclick="selectQuizOption(${idx})" id="quiz-opt-${idx}" class="btn-tactile w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/40 font-bold text-slate-800 text-base transition-all flex items-center justify-between">
+          <span>${opt}</span>
+          <span class="text-xs font-extrabold text-slate-300">Option ${String.fromCharCode(65 + idx)}</span>
+        </button>
+      `).join('');
+    }
+
+    function selectQuizOption(selectedIndex) {
+      if (quizState.answered) return;
+      quizState.answered = true;
+
+      const q = QUIZ_QUESTIONS[quizState.currentIndex];
+      const chosenOption = q.options[selectedIndex];
+      const isCorrect = chosenOption === q.correct;
+
+      // Style buttons
+      q.options.forEach((opt, idx) => {
+        const btn = document.getElementById(`quiz-opt-${idx}`);
+        btn.disabled = true;
+        btn.classList.remove('hover:border-emerald-400', 'hover:bg-emerald-50/40');
+
+        if (opt === q.correct) {
+          btn.classList.remove('border-slate-200');
+          btn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+        } else if (idx === selectedIndex && !isCorrect) {
+          btn.classList.remove('border-slate-200');
+          btn.classList.add('border-rose-500', 'bg-rose-50', 'text-rose-900', 'animate-shake');
+        } else {
+          btn.classList.add('opacity-50');
+        }
+      });
+
+      // Update score & streak
+      if (isCorrect) {
+        quizState.score++;
+        quizState.streak++;
+        if (quizState.streak > quizState.bestStreak) quizState.bestStreak = quizState.streak;
+      } else {
+        quizState.streak = 0;
+      }
+
+      document.getElementById('quiz-score').textContent = quizState.score;
+      document.getElementById('quiz-streak').textContent = quizState.streak;
+
+      // Show feedback
+      const feedbackEl = document.getElementById('quiz-feedback');
+      feedbackEl.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-300', 'text-emerald-900', 'bg-rose-50', 'border-rose-300', 'text-rose-900');
+
+      if (isCorrect) {
+        feedbackEl.classList.add('bg-emerald-50', 'border-emerald-300', 'text-emerald-900');
+        document.getElementById('quiz-feedback-icon').textContent = '🎉';
+        document.getElementById('quiz-feedback-title').textContent = '¡Correcto! Great job!';
+      } else {
+        feedbackEl.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-900');
+        document.getElementById('quiz-feedback-icon').textContent = '💡';
+        document.getElementById('quiz-feedback-title').textContent = `Not quite — Correct answer: "${q.correct}"`;
+      }
+
+      document.getElementById('quiz-feedback-explanation').textContent = q.explanation;
+
+      const nextBtn = document.getElementById('quiz-next-btn');
+      nextBtn.innerHTML = quizState.currentIndex === QUIZ_QUESTIONS.length - 1
+        ? `<span>See Final Results</span> <span>🏆</span>`
+        : `<span>Next Question</span> <span>→</span>`;
+
+      speakSpanish(q.fullSpanish);
+    }
+
+    function speakQuizAnswer() {
+      const q = QUIZ_QUESTIONS[quizState.currentIndex];
+      speakSpanish(q.fullSpanish);
+    }
+
+    function nextQuizQuestion() {
+      if (quizState.currentIndex < QUIZ_QUESTIONS.length - 1) {
+        quizState.currentIndex++;
+        renderQuizQuestion();
+      } else {
+        // Show completion screen
+        document.getElementById('quiz-progress-bar').style.width = '100%';
+        document.getElementById('quiz-active-area').classList.add('hidden');
+        document.getElementById('quiz-results-area').classList.remove('hidden');
+
+        document.getElementById('final-score').textContent = `${quizState.score}/${QUIZ_QUESTIONS.length}`;
+        document.getElementById('final-accuracy').textContent = `${Math.round((quizState.score / QUIZ_QUESTIONS.length) * 100)}%`;
+        document.getElementById('final-streak').textContent = quizState.bestStreak;
+      }
+    }
+
+    function restartQuiz() {
+      quizState = { currentIndex: 0, score: 0, streak: 0, bestStreak: 0, answered: false };
+      document.getElementById('quiz-results-area').classList.add('hidden');
+      document.getElementById('quiz-active-area').classList.remove('hidden');
+      renderQuizQuestion();
+    }
+
+    // =========================================================================
+    // 6. SPEED SORTING MINI-GAME ("GUSTA VS. GUSTAN")
+    // =========================================================================
+    const GAME_DECK = [
+      ...VOCAB_ITEMS,
+      { spanish: 'el helado', english: 'ice cream', emoji: '🍦', category: 'singular' },
+      { spanish: 'las frutas', english: 'fruits', emoji: '🍓', category: 'plural' },
+      { spanish: 'correr', english: 'to run', emoji: '🏃', category: 'verb' },
+      { spanish: 'los gatos', english: 'cats', emoji: '🐱', category: 'plural' },
+      { spanish: 'la música', english: 'music', emoji: '🎵', category: 'singular' },
+      { spanish: 'nadar', english: 'to swim', emoji: '🏊', category: 'verb' },
+      { spanish: 'los lunes', english: 'Mondays', emoji: '📅', category: 'plural' },
+      { spanish: 'leer', english: 'to read', emoji: '📖', category: 'verb' },
+      { spanish: 'la lluvia', english: 'rain', emoji: '🌧️', category: 'singular' },
+      { spanish: 'las flores', english: 'flowers', emoji: '🌻', category: 'plural' }
+    ];
+
+    let gameTimerInterval = null;
+    let gameState = {
+      timeLeft: 45,
+      score: 0,
+      combo: 1,
+      correctCount: 0,
+      currentItem: null
+    };
+
+    function startSpeedGame() {
+      if (gameTimerInterval) clearInterval(gameTimerInterval);
+      gameState = { timeLeft: 45, score: 0, combo: 1, correctCount: 0, currentItem: null };
+
+      document.getElementById('game-start-screen').classList.add('hidden');
+      document.getElementById('game-over-screen').classList.add('hidden');
+      document.getElementById('game-play-screen').classList.remove('hidden');
+
+      updateGameHUD();
+      nextGameCard();
+
+      gameTimerInterval = setInterval(() => {
+        gameState.timeLeft--;
+        updateGameHUD();
+        if (gameState.timeLeft <= 0) {
+          endSpeedGame();
+        }
+      }, 1000);
+    }
+
+    function updateGameHUD() {
+      document.getElementById('game-timer').textContent = `${gameState.timeLeft}s`;
+      document.getElementById('game-score').textContent = gameState.score;
+      document.getElementById('game-combo').textContent = `x${gameState.combo} 🔥`;
+    }
+
+    function nextGameCard() {
+      let next;
+      do {
+        next = GAME_DECK[Math.floor(Math.random() * GAME_DECK.length)];
+      } while (gameState.currentItem && next.spanish === gameState.currentItem.spanish);
+
+      gameState.currentItem = next;
+      document.getElementById('game-item-emoji').textContent = next.emoji;
+      document.getElementById('game-item-spanish').textContent = next.spanish;
+      document.getElementById('game-item-english').textContent = `(${next.english})`;
+    }
+
+    function handleGameAnswer(choice) {
+      if (gameState.timeLeft <= 0 || !gameState.currentItem) return;
+
+      const expected = gameState.currentItem.category === 'plural' ? 'gustan' : 'gusta';
+      const toast = document.getElementById('game-toast');
+      const cardBox = document.getElementById('game-card-box');
+
+      if (choice === expected) {
+        const pts = 10 * gameState.combo;
+        gameState.score += pts;
+        gameState.correctCount++;
+        gameState.combo = Math.min(5, gameState.combo + 1);
+
+        toast.className = 'h-6 mt-3 text-sm font-extrabold text-emerald-600';
+        toast.textContent = `✅ ¡Sí! +${pts} pts (${expected.toUpperCase()})`;
+        cardBox.classList.remove('border-rose-400', 'animate-shake');
+        cardBox.classList.add('border-emerald-400');
+      } else {
+        gameState.combo = 1;
+        const reason = gameState.currentItem.category === 'plural'
+          ? 'Plural nouns use GUSTAN!'
+          : gameState.currentItem.category === 'verb'
+            ? 'Actions/verbs use GUSTA!'
+            : 'Singular nouns use GUSTA!';
+
+        toast.className = 'h-6 mt-3 text-sm font-extrabold text-rose-600';
+        toast.textContent = `❌ Oops! ${reason}`;
+        cardBox.classList.remove('border-emerald-400');
+        cardBox.classList.add('border-rose-400', 'animate-shake');
+        setTimeout(() => cardBox.classList.remove('animate-shake'), 350);
+      }
+
+      updateGameHUD();
+      nextGameCard();
+    }
+
+    function endSpeedGame() {
+      clearInterval(gameTimerInterval);
+      document.getElementById('game-play-screen').classList.add('hidden');
+      document.getElementById('game-over-screen').classList.remove('hidden');
+
+      document.getElementById('game-final-score').textContent = gameState.score;
+      document.getElementById('game-final-correct').textContent = gameState.correctCount;
+    }
+
+    // Keyboard shortcuts for Speed Sorter
+    document.addEventListener('keydown', (e) => {
+      const gameVisible = !document.getElementById('view-game').classList.contains('hidden');
+      const playVisible = !document.getElementById('game-play-screen').classList.contains('hidden');
+      if (gameVisible && playVisible) {
+        if (e.key === 'ArrowLeft') handleGameAnswer('gusta');
+        if (e.key === 'ArrowRight') handleGameAnswer('gustan');
+      }
+    });
+
+    // =========================================================================
+    // 7. INITIALIZATION
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      renderBuilderStage();
+      renderVocabGrid();
+      renderQuizQuestion();
+    });
+  </script>
+</body>
+</html>
